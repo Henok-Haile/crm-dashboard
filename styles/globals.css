@@ -1,26 +1,41 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* Default font and background */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', sans-serif;
+  @apply bg-gray-50 text-gray-900;
+}
+
+/* Tailwind-style CSS variables (for light/dark mode themes) */
+:root {
+  --radius: 0.625rem;
+  --background: #ffffff;
+  --foreground: #111827;
+  --primary: #1f2937;
+  --secondary: #f3f4f6;
+  --border: #e5e7eb;
+  --input: #f9fafb;
+  --ring: #3b82f6;
+}
+
+.dark {
+  --background: #1f2937;
+  --foreground: #f9fafb;
+  --primary: #f3f4f6;
+  --secondary: #374151;
+  --border: #4b5563;
+  --input: #1f2937;
+  --ring: #60a5fa;
+}
+
+/* Base layer styles using Tailwind */
+@layer base {
+  * {
+    @apply outline-blue-300;
+  }
+  body {
+    @apply bg-white text-black;
+  }  
 }
