@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { supabase } from "../lib/supabase";
 import CreateCustomerForm from "./CreateCustomerForm";
 import DeleteCustomerButton from "./DeleteCustomerButton";
@@ -17,19 +17,21 @@ type Customer = {
   created_at: string;
 };
 
+type SortOption = "name-asc" | "name-desc" | "latest";
+
 export default function CustomerTable() {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [sortBy, setSortBy] = useState<"name-asc" | "name-desc" | "latest">("name-asc");
+  const [sortBy, setSortBy] = useState<SortOption>("name-asc");
   const [filterStartDate, setFilterStartDate] = useState("");
   const [filterEndDate, setFilterEndDate] = useState("");
 
   const itemsPerPage = 5;
 
-  const fetchCustomers = async () => {
+  const fetchCustomers = useCallback(async () => {
     setLoading(true);
     const from = (currentPage - 1) * itemsPerPage;
     const to = from + itemsPerPage - 1;
@@ -57,11 +59,11 @@ export default function CustomerTable() {
     }
 
     setLoading(false);
-  };
+  }, [currentPage, sortBy]);
 
   useEffect(() => {
     fetchCustomers();
-  }, [currentPage, sortBy]);
+  }, [fetchCustomers]);
 
   const filteredCustomers = useMemo(() => {
     const trimmedSearch = searchTerm.trim().toLowerCase();
@@ -112,7 +114,7 @@ export default function CustomerTable() {
           <select
             className="border border-gray-300 p-2 rounded w-full"
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as any)}
+            onChange={(e) => setSortBy(e.target.value as SortOption)}
           >
             <option value="name-asc">A–Z</option>
             <option value="name-desc">Z–A</option>

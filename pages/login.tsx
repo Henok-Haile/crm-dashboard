@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -49,9 +50,9 @@ export default function Login() {
         </div>
         <p className="text-sm text-center mt-6">
           Don’t have an account?{" "}
-          <a href="/signup" className="text-blue-600 underline">
+          <Link href="/signup" className="text-blue-600 underline">
             Sign up
-          </a>
+          </Link>
         </p>
       </div>
     </main>

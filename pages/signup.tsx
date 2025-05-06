@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { supabase } from "../lib/supabase";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -44,9 +45,9 @@ export default function SignUp() {
         </div>
         <p className="text-sm text-center mt-6">
           Already have an account?{" "}
-          <a href="/login" className="text-blue-600 underline">
+          <Link href="/login" className="text-blue-600 underline">
             Login
-          </a>
+          </Link>
         </p>
       </div>
     </main>
