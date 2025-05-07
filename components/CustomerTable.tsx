@@ -1,12 +1,13 @@
-import { useEffect, useState, useMemo, useCallback } from "react";
-import { supabase } from "../lib/supabase";
-import CreateCustomerForm from "./CreateCustomerForm";
-import DeleteCustomerButton from "./DeleteCustomerButton";
-import EditCustomerForm from "./EditCustomerForm";
-import DashboardStats from "./DashboardStats";
-import LogoutButton from "./LogoutButton";
-import { Input } from "./ui/input";
-import { toast } from "sonner";
+import { useEffect, useState, useMemo, useCallback } from 'react';
+import { supabase } from '../lib/supabase';
+import CreateCustomerForm from './CreateCustomerForm';
+import DeleteCustomerButton from './DeleteCustomerButton';
+import EditCustomerForm from './EditCustomerForm';
+import DashboardStats from './DashboardStats';
+import LogoutButton from './LogoutButton';
+import { Input } from './ui/input';
+import { toast } from 'sonner';
+import { useAuth } from '../context/AuthContext'; // make sure this is correctly imported
 
 type Customer = {
   id: string;
@@ -15,51 +16,55 @@ type Customer = {
   phone: string;
   notes: string;
   created_at: string;
+  user_id: string;
 };
 
-type SortOption = "name-asc" | "name-desc" | "latest";
+type SortOption = 'name-asc' | 'name-desc' | 'latest';
 
 export default function CustomerTable() {
+  const { user } = useAuth();
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [sortBy, setSortBy] = useState<SortOption>("name-asc");
-  const [filterStartDate, setFilterStartDate] = useState("");
-  const [filterEndDate, setFilterEndDate] = useState("");
+  const [sortBy, setSortBy] = useState<SortOption>('name-asc');
+  const [filterStartDate, setFilterStartDate] = useState('');
+  const [filterEndDate, setFilterEndDate] = useState('');
 
   const itemsPerPage = 5;
 
   const fetchCustomers = useCallback(async () => {
+    if (!user) return;
     setLoading(true);
     const from = (currentPage - 1) * itemsPerPage;
     const to = from + itemsPerPage - 1;
 
     let query = supabase
-      .from("customers")
-      .select("*", { count: "exact" })
+      .from('customers')
+      .select('*', { count: 'exact' })
+      .eq('user_id', user.id)
       .range(from, to);
 
-    if (sortBy === "name-asc") {
-      query = query.order("name", { ascending: true });
-    } else if (sortBy === "name-desc") {
-      query = query.order("name", { ascending: false });
-    } else if (sortBy === "latest") {
-      query = query.order("created_at", { ascending: false });
+    if (sortBy === 'name-asc') {
+      query = query.order('name', { ascending: true });
+    } else if (sortBy === 'name-desc') {
+      query = query.order('name', { ascending: false });
+    } else if (sortBy === 'latest') {
+      query = query.order('created_at', { ascending: false });
     }
 
     const { data, error, count } = await query;
 
     if (error) {
-      toast.error("Error fetching customers", { description: error.message });
+      toast.error('Error fetching customers', { description: error.message });
     } else {
       setCustomers(data || []);
       if (count) setTotalPages(Math.ceil(count / itemsPerPage));
     }
 
     setLoading(false);
-  }, [currentPage, sortBy]);
+  }, [currentPage, sortBy, user]);
 
   useEffect(() => {
     fetchCustomers();
@@ -86,18 +91,17 @@ export default function CustomerTable() {
     });
   }, [customers, searchTerm, filterStartDate, filterEndDate]);
 
+  if (!user) return <p className="text-center mt-10">Loading user...</p>;
+
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">CRM Dashboard</h1>
         <LogoutButton />
       </div>
 
-      {/* Stats */}
       <DashboardStats />
 
-      {/* Search / Sort / Date Filters */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
         <div className="flex flex-col gap-1">
           <label className="text-sm text-gray-500">🔍 Search</label>
@@ -141,10 +145,8 @@ export default function CustomerTable() {
         </div>
       </div>
 
-      {/* Add Form */}
       <CreateCustomerForm onCustomerAdded={fetchCustomers} />
 
-      {/* Table */}
       {loading ? (
         <p className="text-center">Loading customers...</p>
       ) : filteredCustomers.length === 0 ? (
@@ -192,7 +194,6 @@ export default function CustomerTable() {
             </table>
           </div>
 
-          {/* Pagination */}
           <div className="flex justify-center items-center gap-4 mt-6">
             <button
               className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"

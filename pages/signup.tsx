@@ -10,9 +10,17 @@ export default function SignUp() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSignUp = async () => {
+    if (!email || !password) {
+      toast.error("Please provide both email and password.");
+      return;
+    }
+
+    setLoading(true);
     const { error } = await supabase.auth.signUp({ email, password });
+
     if (error) {
       toast.error("Signup failed", { description: error.message });
     } else {
@@ -21,6 +29,7 @@ export default function SignUp() {
       setPassword("");
       router.push("/login");
     }
+    setLoading(false);
   };
 
   return (
@@ -29,6 +38,7 @@ export default function SignUp() {
         <h1 className="text-2xl font-semibold mb-6 text-center">Create an Account</h1>
         <div className="space-y-4">
           <Input
+            type="email"
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -39,8 +49,12 @@ export default function SignUp() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <Button className="w-full bg-blue-600 text-white hover:bg-blue-700" onClick={handleSignUp}>
-            Create Account
+          <Button
+            className="w-full bg-blue-600 text-white hover:bg-blue-700"
+            onClick={handleSignUp}
+            disabled={loading}
+          >
+            {loading ? "Creating Account..." : "Create Account"}
           </Button>
         </div>
         <p className="text-sm text-center mt-6">

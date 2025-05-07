@@ -1,3 +1,4 @@
+// pages/login.tsx
 import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import { useRouter } from "next/router";
@@ -24,7 +25,7 @@ export default function Login() {
       toast.error("Login failed", { description: error.message });
     } else {
       toast.success("Logged in!");
-      router.push("/");
+      router.push("/dashboard"); // ✅ Redirect to dashboard after login
     }
   };
 
@@ -44,7 +45,10 @@ export default function Login() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <Button className="w-full bg-blue-600 text-white hover:bg-blue-700" onClick={handleLogin}>
+          <Button
+            className="w-full bg-blue-600 text-white hover:bg-blue-700"
+            onClick={handleLogin}
+          >
             Login
           </Button>
         </div>
