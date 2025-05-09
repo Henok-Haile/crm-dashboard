@@ -1,40 +1,159 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# 🚀 SimpleCRM – Customer Relationship Manager
 
-## Getting Started
+**SimpleCRM** is a lightweight, modern, and secure Customer Relationship Management (CRM) system built with **Next.js 15**, **TypeScript**, and **Supabase**. It enables authenticated users to manage their own customer data efficiently, with features like searching, sorting, filtering, and real-time updates.
 
-First, run the development server:
+---
+
+## 📸 Demo
+
+![SimpleCRM Dashboard Screenshot](https://via.placeholder.com/1000x400.png?text=Demo+Coming+Soon)
+
+> 🔐 Only authenticated users can access the dashboard.
+
+---
+
+## ✨ Features
+
+* 🔐 **Authentication** via Supabase
+* ➕ Add, edit, delete customers
+* 📊 Dashboard with stats (total, weekly, latest)
+* 🔍 Search, sort (A-Z, Z-A, Latest), and date range filter
+* 🧍 Row-level security – each user sees **only their own customers**
+* ⚡ Built using **Next.js App Router**, **TailwindCSS**, **Supabase**, and **React Context**
+
+---
+
+## 🛠️ Tech Stack
+
+| Tech            | Role                             |
+| --------------- | -------------------------------- |
+| Next.js 15      | Frontend Framework               |
+| Supabase        | Backend-as-a-Service (Auth + DB) |
+| React + Context | State Management                 |
+| TailwindCSS     | Utility-first styling            |
+| Sonner          | Modern toast notifications       |
+| Lucide Icons    | Iconography                      |
+
+---
+
+## 📁 Folder Structure
+
+```
+crm-dashboard/
+├── components/         # Reusable components (forms, stats, table)
+│   └── ui/             # Button, Input, Dialog, Label
+├── context/            # AuthContext for session state
+├── lib/                # Supabase client setup
+├── pages/              # Next.js Pages: /, /login, /signup, /dashboard
+├── styles/             # Tailwind global styles
+├── public/             # Static assets
+├── .env.local          # Supabase credentials (not committed)
+└── README.md
+```
+
+---
+
+## 🧪 How It Works
+
+### 🔐 Authentication
+
+* Uses Supabase Auth (email/password).
+* On login, user is redirected to `/dashboard`.
+* If unauthenticated, user is redirected to `/login`.
+
+### 🧍 User-Specific Data
+
+Supabase Row-Level Security (RLS) policy ensures users **only see their own customers**.
+
+```sql
+CREATE POLICY "Users can access their own customers"
+ON public.customers
+FOR ALL
+TO authenticated
+USING (auth.uid() = user_id)
+WITH CHECK (auth.uid() = user_id);
+```
+
+### 📦 Database Schema
+
+```sql
+customers (
+  id uuid PRIMARY KEY,
+  name text,
+  email text,
+  phone text,
+  notes text,
+  created_at timestamp,
+  user_id uuid REFERENCES auth.users(id)
+)
+```
+
+---
+
+## ✅ Setup Instructions
+
+### 1. Clone the Repo
+
+```bash
+git clone https://github.com/your-username/crm-dashboard.git
+cd crm-dashboard
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+### 3. Configure Supabase
+
+Create a **`.env.local`** file with:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+```
+
+### 4. Run the App
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Access your app at `http://localhost:3000`
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+---
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+## 🧹 Optional Scripts
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+```bash
+npm run lint     # Run ESLint
+npm run build    # Build for production
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 📚 Learnings / What You’ll Practice
 
-To learn more about Next.js, take a look at the following resources:
+* Modern React Patterns (Hooks, Context)
+* Serverless backend with Supabase
+* Row-level security enforcement
+* Auth-guarded routing
+* UI design with TailwindCSS
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🙌 Acknowledgments
 
-## Deploy on Vercel
+* [Supabase](https://supabase.com)
+* [TailwindCSS](https://tailwindcss.com)
+* [Lucide Icons](https://lucide.dev)
+* [Sonner](https://sonner.emilkowal.ski)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+## 📄 License
+
+MIT © Amina, Fanuel, Henok and Robel - GROUP-3 (https://github.com/Henok-Haile)
+
+---
